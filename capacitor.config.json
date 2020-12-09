@@ -1,0 +1,13 @@
+{
+  "appId": "io.ionic.starter",
+  "appName": "AzuraSakanTaufik_00000020528_IF733_AL_UAS",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  },
+  "cordova": {}
+}
