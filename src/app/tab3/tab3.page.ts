@@ -3,6 +3,7 @@ import { UserService } from '../services/user/user.service';
 import { User } from '../services/user/user';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
+import { Location } from '../services/user/location';
 
 @Component({
   selector: 'app-tab3',
@@ -11,6 +12,7 @@ import { Router } from '@angular/router';
 })
 export class Tab3Page implements OnInit{
   signedInUser: User;
+  history: Array<Location>;
 
   constructor(
       private userService: UserService,
@@ -20,6 +22,8 @@ export class Tab3Page implements OnInit{
 
   ngOnInit() {
     this.signedInUser = this.userService.signedInUser;
+    this.history = Object.entries(this.signedInUser.history).map(([key, value]) => ({key, ...value}));
+    console.log('===this.history', this.history);
   }
 
   logOut() {
@@ -29,4 +33,11 @@ export class Tab3Page implements OnInit{
     });
   }
 
+  date(timestamp: string) {
+    return new Date(timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  }
+
+  onDeleteLocation(key: string) {
+    console.log('===key', key);
+  }
 }

@@ -8,14 +8,15 @@ import { ExploreContainerComponentModule } from '../explore-container/explore-co
 
 import { Tab2PageRoutingModule } from './tab2-routing.module';
 import {AgmCoreModule} from '@agm/core';
+import { environment } from '../../environments/environment';
 
 @NgModule({
   imports: [
     IonicModule,
-    // AgmCoreModule.forRoot({
-    //   apiKey: 'AIzaSyDehuZ6WNyD6N-U9FT3R7ckDTQdQgK4JCE',
-    //   libraries: ['places']
-    // }),
+    AgmCoreModule.forRoot({
+      apiKey: environment.googleMapAPI,
+      libraries: ['places']
+    }),
     CommonModule,
     FormsModule,
     ExploreContainerComponentModule,

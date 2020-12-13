@@ -1,10 +1,10 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>
       Friends
     </ion-title>
     <ion-buttons slot="end">
-      <ion-button color="primary" routerLink="/add-friends">
+      <ion-button color="light" routerLink="/add-friends">
         <ion-icon slot="icon-only" name="person-add"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -12,11 +12,6 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Friends</ion-title>
-    </ion-toolbar>
-  </ion-header>
 
   <ion-searchbar
     showCancelButton="focus"

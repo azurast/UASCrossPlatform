@@ -54,7 +54,8 @@ export class AddFriendsPage implements OnInit {
           // @ts-ignore
           lastName: value.lastName,
           // @ts-ignore
-          email: value.email
+          email: value.email,
+          history: [],
         });
       });
     }).then(() => {

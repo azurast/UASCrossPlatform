@@ -2,6 +2,9 @@ import { Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core'
 import { MapsAPILoader } from '@agm/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AlertController } from '@ionic/angular';
+import {UserService} from '../services/user/user.service';
+import {AngularFireDatabase} from '@angular/fire/database';
+import {User} from "../services/user/user";
 
 declare var google: any;
 
@@ -20,22 +23,46 @@ export class Tab2Page implements OnInit {
   geoCoder: any;
   searchForm: FormGroup;
   searchTerm: string;
+  friendsList: Array<any>;
+  allUsers: Array<User>;
+  allFriends: Array<User>;
+  friendsLastLocation: Array<any>;
+  signedInUser: User;
+  myIcon;
+  friendIcon;
   @ViewChild('search',{static: false }) searchElementRef: ElementRef;
 
   constructor(
       private mapsAPILoader: MapsAPILoader,
       private ngZone: NgZone,
-      private alertController: AlertController
+      private alertController: AlertController,
+      private userService: UserService,
+      private db: AngularFireDatabase
   ) {
   }
 
   ngOnInit(): void {
+    this.myIcon = {
+      url: 'assets/myPosition.svg',
+      scaledSize: {
+        width: 60,
+        height: 60
+      }};
+    this.friendIcon = {
+      url: 'assets/friendPosition.svg',
+      scaledSize: {
+        width: 60,
+        height:60
+      }};
     this.isCheckingIn = true;
     this.searchForm = new FormGroup({
       searchTerm: new FormControl(null, {
-      updateOn: 'blur'
+        updateOn: 'blur'
       })});
-
+    this.signedInUser = this.userService.signedInUser;
+    this.allUsers = new Array<User>();
+    this.allFriends = new Array<User>();
+    this.friendsLastLocation = [];
     this.mapsAPILoader.load().then(() => {
       this.setCurrentLocation();
       this.geoCoder = new google.maps.Geocoder();
@@ -58,6 +85,48 @@ export class Tab2Page implements OnInit {
           this.address = place.formatted_address;
         });
       });
+    });
+    setTimeout(() => this.initialize(), 1000);
+  }
+
+  initialize() {
+    this.db.object('/users/'+ this.signedInUser.id + '/friends/').query.once('value').then((dataSnapshot) => {
+      this.friendsList = dataSnapshot.val();
+      this.userService.setFriendsList(this.friendsList);
+    });
+    this.db.object('users/' ).query.orderByKey().once('value').then((dataSnapshot) => {
+      Object.entries(dataSnapshot.val()).map(([key, value]) => {
+        this.allUsers.push({
+          id: key,
+          // @ts-ignore
+          firstName: value.firstName,
+          // @ts-ignore
+          lastName: value.lastName,
+          // @ts-ignore
+          email: value.email,
+          // @ts-ignore
+          history: value.history
+        });
+      });
+    }).then(() => {
+      this.allUsers.forEach((user) => {
+        if (this.friendsList.includes(user.id)) {
+          this.allFriends.push(user);
+        }
+      });
+      setTimeout(() => this.userService.getFriendsLastLocation(), 2000);
+      this.friendsLastLocation = this.userService.friendsLastLocation;
+      console.log('===this.friendsLastLocation', this.friendsLastLocation);
+      const markers = [];
+      // tslint:disable-next-line:prefer-for-of
+      for (let i = 0; i < this.friendsLastLocation.length; i++) {
+        const pos = new google.maps.LatLng(this.friendsLastLocation[i].lat, this.friendsLastLocation[i].lng);
+        markers[i] = new google.maps.Marker({
+          position: pos,
+          map: this.map,
+          description: this.friendsLastLocation[i].address
+        });
+      }
     });
   }
 
@@ -116,10 +185,12 @@ export class Tab2Page implements OnInit {
   }
 
   onCheckIn() {
-    this.presentAlertConfirm(this.address, this.latitude, this.longitude);
+    const date = new Date();
+    const timestamp = date.toISOString();
+    this.presentAlertConfirm(this.address, this.latitude, this.longitude, timestamp);
   }
 
-  async presentAlertConfirm(address: string, lat: number, lng: number) {
+  async presentAlertConfirm(address: string, latitude: number, longitude: number, timestamp: string) {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Checkin here?',
@@ -135,7 +206,12 @@ export class Tab2Page implements OnInit {
         }, {
           text: 'Okay',
           handler: () => {
-            console.log('Confirm Okay');
+            this.userService.checkIn({
+              timestamp,
+              latitude,
+              longitude,
+              address
+            });
           }
         }
       ]

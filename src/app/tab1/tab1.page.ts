@@ -58,7 +58,9 @@ export class Tab1Page implements OnInit {
           // @ts-ignore
           lastName: value.lastName,
           // @ts-ignore
-          email: value.email
+          email: value.email,
+          // @ts-ignore
+          history: value.history
         });
       });
     }).then(() => {
@@ -67,6 +69,8 @@ export class Tab1Page implements OnInit {
           this.allFriends.push(user);
         }
       });
+      const lastLoc = this.userService.getFriendsLastLocation();
+      console.log('===lastLoc', lastLoc);
     });
   }
 

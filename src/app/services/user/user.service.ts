@@ -12,10 +12,12 @@ export class UserService {
   signedInUser: User;
   allFriends: Array<string>;
   localStorage: Storage;
+  friendsLastLocation: Array<any>;
 
   constructor(
       private db: AngularFireDatabase
   ) {
+    this.friendsLastLocation = [];
     this.usersRef = db.list(this.dbPath);
     this.localStorage = window.localStorage;
   }
@@ -27,7 +29,8 @@ export class UserService {
       email: providerData[0].email,
       firstName,
       lastName,
-      friends: []
+      friends: [],
+      history: []
     });
   }
 
@@ -42,9 +45,12 @@ export class UserService {
       this.signedInUser.firstName = dataSnapshot.val().firstName || '';
       this.signedInUser.lastName = dataSnapshot.val().lastName || '';
       this.signedInUser.email = dataSnapshot.val().email || '';
-
+      this.signedInUser.history = dataSnapshot.val().history || [];
       if (this.isLocalStorageSupported) {
+        console.log('===localStorageSupported');
         this.localStorage.setItem('user', JSON.stringify(this.signedInUser));
+      } else {
+        console.log('not localStorageSupported');
       }
     });
   }
@@ -62,4 +68,31 @@ export class UserService {
     return this.allFriends;
   }
 
+  checkIn(data) {
+    console.log('===data', data);
+    this.db.database.ref('users/' + this.signedInUser.id + '/history').push(data);
+  }
+
+  getFriendsLastLocation() {
+    this.allFriends.forEach((id) => {
+      let name = 'friend';
+      this.db.database.ref('users/' + id).once('value').then((data) => name = data.val().firstName).then(() => {
+        this.db.database.ref('users/' + id +'/history')
+            .orderByChild('timestamp').limitToLast(1)
+            .once('value').then((dataSnapshot) => {
+          const loc = Object.values(dataSnapshot.val());
+          this.friendsLastLocation.push({
+            id,
+            // @ts-ignore
+            address: loc[0].address,
+            // @ts-ignore
+            lat: loc[0].latitude,
+            // @ts-ignore
+            lng: loc[0].longitude,
+            name
+          });
+        });
+      });
+    });
+  }
 }
