@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "uas-mobile-1af4c": {
+      "hosting": {
+        "app": [
+          "uas-mobile-1af4c"
+        ]
+      }
+    }
+  }
+}

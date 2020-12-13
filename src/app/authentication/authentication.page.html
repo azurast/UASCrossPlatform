@@ -1,0 +1,62 @@
+<ion-content>
+  <ion-grid>
+    <div *ngIf="isLogin">
+      <form [formGroup]="loginForm" (ngSubmit)="login(loginForm.value)">
+        <div class="ion-text-center">
+          <ion-text><h3>Login</h3></ion-text>
+        </div>
+        <ion-row>
+          <ion-item>
+            <ion-label position="fixed">Email</ion-label>
+            <ion-input type="email" formControlName="email"></ion-input>
+          </ion-item>
+        </ion-row>
+        <ion-row>
+          <ion-item>
+            <ion-label position="fixed">Password</ion-label>
+            <ion-input type="password" formControlName="password"></ion-input>
+          </ion-item>
+        </ion-row>
+        <ion-button expand="block" class="ion-margin" type="submit">Login</ion-button>
+        <div class="ion-text-center">
+          <ion-text (click)="toggleAuth()"><a>Or Register Here</a></ion-text>
+        </div>
+      </form>
+    </div>
+    <div *ngIf="!isLogin">
+      <form [formGroup]="registerForm" (ngSubmit)="signUp(registerForm.value)">
+        <div class="ion-text-center">
+          <ion-text><h3>Register</h3></ion-text>
+        </div>
+        <ion-item>
+          <ion-label position="fixed">First Name</ion-label>
+          <ion-input type="text" formControlName="firstName"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="fixed">Last Name</ion-label>
+          <ion-input type="text" formControlName="lastName"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="fixed">Email</ion-label>
+          <ion-input type="email" formControlName="email"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="fixed">Password</ion-label>
+          <ion-input type="password" formControlName="password"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="fixed">Confirm Password</ion-label>
+          <ion-input type="password" formControlName="confirmPassword"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-checkbox slot="start" formControlName="agreement"></ion-checkbox>
+          <ion-label>I agree to all terms and conditions</ion-label>
+        </ion-item>
+        <ion-button expand="block" class="ion-margin" type="submit">Register</ion-button>
+        <div class="ion-text-center">
+          <ion-text (click)="toggleAuth()"><a>Or Login Here</a></ion-text>
+        </div>
+      </form>
+    </div>
+  </ion-grid>
+</ion-content>

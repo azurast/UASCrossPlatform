@@ -14,8 +14,15 @@
     "lib": [
       "es2018",
       "dom"
+    ],
+    "types": [
+      "googlemaps"
     ]
   },
+  "exclude": [
+    "test.ts",
+    "**/*.spec.ts"
+  ],
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true
