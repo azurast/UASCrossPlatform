@@ -48,6 +48,7 @@ export class UserService {
       this.signedInUser.history = dataSnapshot.val().history || [];
       if (this.isLocalStorageSupported) {
         console.log('===localStorageSupported');
+        console.log('===this.signedInUser', this.signedInUser);
         this.localStorage.setItem('user', JSON.stringify(this.signedInUser));
       } else {
         console.log('not localStorageSupported');
@@ -55,8 +56,13 @@ export class UserService {
     });
   }
 
+  getLoggedInUser = () => {
+    return JSON.parse(this.localStorage.getItem('user'));
+  }
+
   logOut() {
     this.localStorage.removeItem('user');
+    this.friendsLastLocation = [];
   }
 
   setFriendsList(data: Array<string>) {
