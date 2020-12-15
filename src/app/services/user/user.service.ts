@@ -10,7 +10,7 @@ export class UserService {
   usersRef: AngularFireList<User> = null;
   dbRef: any;
   signedInUser: User;
-  allFriends: Array<string>;
+  allFriends: Array<any>;
   localStorage: Storage;
   friendsLastLocation: Array<any>;
 
@@ -65,18 +65,18 @@ export class UserService {
     this.friendsLastLocation = [];
   }
 
-  setFriendsList(data: Array<string>) {
-    this.allFriends = data;
-    // set it to DB
+  setFriendsList(data) {
+    this.allFriends = Object.entries(data).map(([key,value]) => (value));
+    // set to db
   }
 
   getFriendsList() {
+    console.log('===this.allFriends', this.allFriends);
     return this.allFriends;
   }
 
   checkIn(data) {
-    console.log('===data', data);
-    this.db.database.ref('users/' + this.signedInUser.id + '/history').push(data);
+    this.db.database.ref('users/' + this.getLoggedInUser().id + '/history').push(data);
   }
 
   getFriendsLastLocation() {
