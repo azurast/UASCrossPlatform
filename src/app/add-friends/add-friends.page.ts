@@ -24,6 +24,7 @@ export class AddFriendsPage implements OnInit {
     this.allUsers = new Array<User>();
     this.allStrangers = new Array<User>();
     this.friendsList = this.userService.getFriendsList() || [];
+    // console.log('===this.friendsList', this.friendsList);
     this.initialize();
   }
 
@@ -71,9 +72,13 @@ export class AddFriendsPage implements OnInit {
   }
 
   onAddFriend(id: string) {
+    // console.log('===id', id);
+    // console.log('===strangers', this.allStrangers);
+    // console.log('===friends', this.friendsList);
     this.allStrangers = this.allStrangers.filter(strangerId => strangerId.id !== id);
     this.friendsList.push(id);
     this.userService.setFriendsList(this.friendsList);
     this.db.database.ref('/users/'+ this.signedInUser.id + '/friends/').push(id);
+    // this.userService.setFriendsListStr(this.friendsList);
   }
 }

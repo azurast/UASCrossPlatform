@@ -116,6 +116,7 @@ export class Tab2Page implements OnInit {
       });
       setTimeout(() => this.userService.getFriendsLastLocation(), 2000);
       this.friendsLastLocation = this.userService.friendsLastLocation;
+      // console.log('===this.friendsLastLocation', this.friendsLastLocation);
       const markers = [];
       // tslint:disable-next-line:prefer-for-of
       for (let i = 0; i < this.friendsLastLocation.length; i++) {
@@ -200,7 +201,7 @@ export class Tab2Page implements OnInit {
           role: 'cancel',
           cssClass: 'secondary',
           handler: (blah) => {
-            console.log('Confirm Cancel: blah');
+            // console.log('Confirm Cancel: blah');
           }
         }, {
           text: 'Okay',

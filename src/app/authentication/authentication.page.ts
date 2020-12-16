@@ -25,8 +25,8 @@ export class AuthenticationPage implements OnInit {
   login(credentials) {
     this.auth.signInWithEmailAndPassword(credentials.email, credentials.password)
       .then((signedUser) => {
-        this.router.navigateByUrl('tabs/tab2');
         this.userService.setLoggedInUser(signedUser.user.uid);
+        this.router.navigateByUrl('tabs/tab2');
       },
         async error => {
           const alert = await this.alertCtrl.create({
@@ -41,6 +41,7 @@ export class AuthenticationPage implements OnInit {
     this.auth.createUserWithEmailAndPassword(credentials.email, credentials.password)
       .then((signedUser) => {
         this.userService.createUser(signedUser.user, credentials.firstName, credentials.lastName);
+        this.userService.setLoggedInUser(signedUser.user.uid);
         this.router.navigateByUrl('tabs/tab2');
       },
         async error => {
@@ -60,7 +61,7 @@ export class AuthenticationPage implements OnInit {
     this.isLogin = true;
     this.auth.onAuthStateChanged((signedUser) => {
       if (signedUser) {
-        console.log('===signedUser', signedUser);
+        // console.log('===signedUser', signedUser);
         this.userService.setLoggedInUser(signedUser.uid);
         this.router.navigateByUrl('tabs/tab2');
       }

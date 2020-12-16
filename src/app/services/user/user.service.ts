@@ -29,8 +29,8 @@ export class UserService {
       email: providerData[0].email,
       firstName,
       lastName,
-      friends: [],
-      history: []
+      friends: {empty: ''},
+      history: {empty: ''}
     });
   }
 
@@ -47,11 +47,11 @@ export class UserService {
       this.signedInUser.email = dataSnapshot.val().email || '';
       this.signedInUser.history = dataSnapshot.val().history || [];
       if (this.isLocalStorageSupported) {
-        console.log('===localStorageSupported');
-        console.log('===this.signedInUser', this.signedInUser);
+        // console.log('===localStorageSupported');
+        // console.log('===this.signedInUser', this.signedInUser);
         this.localStorage.setItem('user', JSON.stringify(this.signedInUser));
       } else {
-        console.log('not localStorageSupported');
+        // console.log('not localStorageSupported');
       }
     });
   }
@@ -62,6 +62,7 @@ export class UserService {
 
   logOut() {
     this.localStorage.removeItem('user');
+    this.signedInUser = new User();
     this.friendsLastLocation = [];
   }
 
@@ -70,8 +71,13 @@ export class UserService {
     // set to db
   }
 
+  setFriendsListStr(data) {
+    this.allFriends = data;
+    // set to db
+  }
+
   getFriendsList() {
-    console.log('===this.allFriends', this.allFriends);
+    // console.log('===this.allFriends', this.allFriends);
     return this.allFriends;
   }
 

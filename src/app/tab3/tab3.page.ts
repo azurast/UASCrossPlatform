@@ -25,7 +25,7 @@ export class Tab3Page implements OnInit{
   ngOnInit() {
     this.signedInUser = this.userService.getLoggedInUser();
     this.db.object('/users/'+ this.signedInUser.id + '/history/').query.once('value').then((dataSnapshot) => {
-      console.log('===dataSnapshot', dataSnapshot.val());
+      // console.log('===dataSnapshot', dataSnapshot.val());
       // @ts-ignore
       this.history = Object.entries(dataSnapshot.val()).map(([key, value]) => ({key, ...value}));
     });
