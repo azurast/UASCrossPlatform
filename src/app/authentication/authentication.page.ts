@@ -58,11 +58,13 @@ export class AuthenticationPage implements OnInit {
 
   ngOnInit() {
     this.isLogin = true;
-    // this.auth.onAuthStateChanged((signedUser) => {
-    //   if (signedUser) {
-    //
-    //   }
-    // });
+    this.auth.onAuthStateChanged((signedUser) => {
+      if (signedUser) {
+        console.log('===signedUser', signedUser);
+        this.userService.setLoggedInUser(signedUser.uid);
+        this.router.navigateByUrl('tabs/tab2');
+      }
+    });
     this.loginForm = new FormGroup({
       email: new FormControl(null, {
         updateOn: 'blur',

@@ -4,7 +4,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { AlertController } from '@ionic/angular';
 import {UserService} from '../services/user/user.service';
 import {AngularFireDatabase} from '@angular/fire/database';
-import {User} from "../services/user/user";
+import {User} from '../services/user/user';
 
 declare var google: any;
 
@@ -59,7 +59,7 @@ export class Tab2Page implements OnInit {
       searchTerm: new FormControl(null, {
         updateOn: 'blur'
       })});
-    this.signedInUser = this.userService.signedInUser;
+    this.signedInUser = this.userService.getLoggedInUser();
     this.allUsers = new Array<User>();
     this.allFriends = new Array<User>();
     this.friendsLastLocation = [];
@@ -81,7 +81,7 @@ export class Tab2Page implements OnInit {
           // set latitude, longitude and zoom
           this.latitude = place.geometry.location.lat();
           this.longitude = place.geometry.location.lng();
-          this.zoom = 12;
+          this.zoom = 15;
           this.address = place.formatted_address;
         });
       });
@@ -91,8 +91,8 @@ export class Tab2Page implements OnInit {
 
   initialize() {
     this.db.object('/users/'+ this.signedInUser.id + '/friends/').query.once('value').then((dataSnapshot) => {
-      this.friendsList = dataSnapshot.val();
-      this.userService.setFriendsList(this.friendsList);
+      this.userService.setFriendsList(dataSnapshot.val());
+      this.friendsList = this.userService.getFriendsList();
     });
     this.db.object('users/' ).query.orderByKey().once('value').then((dataSnapshot) => {
       Object.entries(dataSnapshot.val()).map(([key, value]) => {
@@ -116,7 +116,6 @@ export class Tab2Page implements OnInit {
       });
       setTimeout(() => this.userService.getFriendsLastLocation(), 2000);
       this.friendsLastLocation = this.userService.friendsLastLocation;
-      console.log('===this.friendsLastLocation', this.friendsLastLocation);
       const markers = [];
       // tslint:disable-next-line:prefer-for-of
       for (let i = 0; i < this.friendsLastLocation.length; i++) {

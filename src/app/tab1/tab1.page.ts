@@ -21,7 +21,7 @@ export class Tab1Page implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.signedInUser = this.userService.signedInUser;
+    this.signedInUser = this.userService.getLoggedInUser();
     this.allUsers = new Array<User>();
     this.allFriends = new Array<User>();
     this.initialize();
@@ -46,8 +46,8 @@ export class Tab1Page implements OnInit {
 
   initialize() {
     this.db.object('/users/'+ this.signedInUser.id + '/friends/').query.once('value').then((dataSnapshot) => {
-      this.friendsList = dataSnapshot.val();
-      this.userService.setFriendsList(this.friendsList);
+      this.userService.setFriendsList(dataSnapshot.val());
+      this.friendsList = this.userService.getFriendsList();
     });
     this.db.object('users/' ).query.orderByKey().once('value').then((dataSnapshot) => {
       Object.entries(dataSnapshot.val()).map(([key, value]) => {
@@ -70,7 +70,6 @@ export class Tab1Page implements OnInit {
         }
       });
       const lastLoc = this.userService.getFriendsLastLocation();
-      console.log('===lastLoc', lastLoc);
     });
   }
 
@@ -83,5 +82,9 @@ export class Tab1Page implements OnInit {
       }
     });
     this.userService.setFriendsList(this.friendsList);
+    this.db.database.ref('/users/'+ this.signedInUser.id + '/friends/').orderByValue().equalTo(id).once('value').then((data) =>{
+      const friendKeyToDel =  Object.keys(data.val())[0];
+      this.db.database.ref('/users/'+ this.signedInUser.id + '/friends/' + friendKeyToDel).remove();
+    });
   }
 }

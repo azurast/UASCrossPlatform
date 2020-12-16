@@ -4,6 +4,7 @@ import { User } from '../services/user/user';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { Location } from '../services/user/location';
+import {AngularFireDatabase} from '@angular/fire/database';
 
 @Component({
   selector: 'app-tab3',
@@ -17,13 +18,17 @@ export class Tab3Page implements OnInit{
   constructor(
       private userService: UserService,
       private auth: AngularFireAuth,
-      private router: Router
+      private router: Router,
+      private db: AngularFireDatabase
   ) {}
 
   ngOnInit() {
-    this.signedInUser = this.userService.signedInUser;
-    this.history = Object.entries(this.signedInUser.history).map(([key, value]) => ({key, ...value}));
-    console.log('===this.history', this.history);
+    this.signedInUser = this.userService.getLoggedInUser();
+    this.db.object('/users/'+ this.signedInUser.id + '/history/').query.once('value').then((dataSnapshot) => {
+      console.log('===dataSnapshot', dataSnapshot.val());
+      // @ts-ignore
+      this.history = Object.entries(dataSnapshot.val()).map(([key, value]) => ({key, ...value}));
+    });
   }
 
   logOut() {
@@ -38,6 +43,8 @@ export class Tab3Page implements OnInit{
   }
 
   onDeleteLocation(key: string) {
-    console.log('===key', key);
+    // @ts-ignore
+    this.history= this.history.filter(history => history.key !== key);
+    this.db.database.ref('/users/'+ this.signedInUser.id + '/history/' + key).remove();
   }
 }

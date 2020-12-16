@@ -20,7 +20,7 @@ export class AddFriendsPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.signedInUser = this.userService.signedInUser;
+    this.signedInUser = this.userService.getLoggedInUser();
     this.allUsers = new Array<User>();
     this.allStrangers = new Array<User>();
     this.friendsList = this.userService.getFriendsList() || [];
@@ -74,5 +74,6 @@ export class AddFriendsPage implements OnInit {
     this.allStrangers = this.allStrangers.filter(strangerId => strangerId.id !== id);
     this.friendsList.push(id);
     this.userService.setFriendsList(this.friendsList);
+    this.db.database.ref('/users/'+ this.signedInUser.id + '/friends/').push(id);
   }
 }
